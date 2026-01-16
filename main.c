@@ -1,7 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 
 char board[9];
 char HUMAN, AI;
+int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
+
 
 /* Function Prototypes */
 void initializeBoard();
@@ -109,12 +114,20 @@ int findBestMove() {
     }
     return bestMove;
 }
+int randomMove() {
+    int move;
+    while (1) {
+        move = rand() % 9;
+        if (board[move] == ' ')
+            return move;
+    }
+}
 
 /* Main function */
 int main() {
     int move;
     char choice;
-
+    srand(time(NULL));
     initializeBoard();
 
     printf("Choose your symbol (X/O): ");
@@ -127,7 +140,12 @@ int main() {
         HUMAN = 'O';
         AI = 'X';
     }
-
+    printf("\nSelect Difficulty:\n");
+    printf("1. Easy\n");
+    printf("2. Medium\n");
+    printf("3. Hard\n");
+    printf("Enter choice: ");
+    scanf("%d", &difficulty);
     char currentPlayer = 'X';
 
     while (1) {
@@ -144,10 +162,23 @@ int main() {
             }
             board[move] = HUMAN;
         } else {
-            printf("AI is making a move...\n");
+    printf("AI is making a move...\n");
+
+    if (difficulty == 1) {
+        move = randomMove();               // Easy
+    }
+    else if (difficulty == 2) {
+        if (rand() % 2 == 0)
+            move = randomMove();           // Medium (sometimes random)
+        else
             move = findBestMove();
-            board[move] = AI;
-        }
+    }
+    else {
+        move = findBestMove();             // Hard
+    }
+
+    board[move] = AI;
+}
 
         int winner = checkWinner();
         if (winner) {
@@ -164,6 +195,12 @@ int main() {
             printf("It's a draw!\n");
             break;
         }
+
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    }
+
+    return 0;
+}
 
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
